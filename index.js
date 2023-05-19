@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000;
 app.use(cors())
 app.use(express.json())
 
-console.log(process.env.DB_USER, process.env.DB_PASS)
+// console.log(process.env.DB_USER, process.env.DB_PASS)
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.h2fzsvj.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -26,7 +26,21 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    client.connect();
+
+    const categoryCollection = client.db("toyDB").collection("categoryToys");
+
+    app.get('/toys-by-category', async(req, res) => {
+      const category = req.query.category;
+      if(category === 'All'){
+        const result = await categoryCollection.find({}).toArray()
+        return res.send(result)
+      }
+      const filter = {sub_category: category}
+      const result = await categoryCollection.find(filter).toArray()
+      res.send(result)
+      console.log(category)
+    })
 
     app.get('/motive-toy', (req, res) => {
       res.send('Welcome to the Motive Toy website!!')
