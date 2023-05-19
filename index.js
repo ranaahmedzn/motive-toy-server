@@ -31,6 +31,12 @@ async function run() {
     const toyCollection = client.db("toyDB").collection("toys")
     const categoryCollection = client.db("toyDB").collection("categoryToys");
 
+    // creating index for toyCollection 
+    const indexKeys = { Name: 1 }
+    const indexOptions = { name: "toyName" }
+    const result = await toyCollection.createIndex(indexKeys, indexOptions);
+    console.log(result)
+
     app.get('/toys-by-category', async(req, res) => {
       const category = req.query.category;
       if(category === 'All'){
@@ -41,6 +47,20 @@ async function run() {
       const result = await categoryCollection.find(filter).toArray()
       res.send(result)
       // console.log(category)
+    })
+
+    app.get('/all-toys', async(req, res) => {
+      const result = await toyCollection.find().limit(20).toArray()
+      res.send(result)
+    })
+
+    // get toys by search text
+    app.get('/getToys-byText', async(req, res) => {
+      const text = req.query.search;
+      console.log(text)
+
+      const result = await toyCollection.find({Name: {$regex: text, $options: "i"}}).limit(20).toArray()
+      res.send(result)
     })
 
     app.post('/toys/add-toy', async(req, res) => {
