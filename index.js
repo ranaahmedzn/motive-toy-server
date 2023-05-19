@@ -64,6 +64,13 @@ async function run() {
       res.send(result)
     })
 
+    app.delete('/toys/delete-toy/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await toyCollection.deleteOne(query)
+      res.send(result)
+    })
+
     app.get('/motive-toy', (req, res) => {
       res.send('Welcome to the Motive Toy website!!')
     })
