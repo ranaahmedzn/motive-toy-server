@@ -1,6 +1,6 @@
 const express = require('express')
 const cors = require('cors')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 
 const app = express()
@@ -44,9 +44,23 @@ async function run() {
     })
 
     app.post('/toys/add-toy', async(req, res) => {
-      const doc = req.body;
+      const toy = req.body;
       // console.log(doc)
-      const result = await toyCollection.insertOne(doc)
+      const result = await toyCollection.insertOne(toy)
+      res.send(result)
+    })
+
+    app.patch('/toys/update-toy/:id', async(req, res) => {
+      const id = req.params.id;
+      const toy = req.body;
+      const filter = {_id: new ObjectId(id)}
+      
+      const updatedToy = {
+        $set: {
+          ...toy
+        }
+      }
+      const result = await toyCollection.updateOne(filter,updatedToy)
       res.send(result)
     })
 
