@@ -43,7 +43,7 @@ async function run() {
         const result = await categoryCollection.find({}).toArray();
         return res.send(result);
       }
-      const filter = { sub_category: category };
+      const filter = { subCategory: category };
       const result = await categoryCollection.find(filter).toArray();
       res.send(result);
       // console.log(category)
@@ -60,7 +60,7 @@ async function run() {
       // console.log(text)
 
       const result = await toyCollection
-        .find({ Name: { $regex: text, $options: "i" } })
+        .find({ toyName: { $regex: text, $options: "i" } })
         .limit(20)
         .toArray();
       res.send(result);
@@ -88,7 +88,6 @@ async function run() {
 
       const result = await categoryCollection.findOne(filter)
       res.send(result)
-      console.log(result)
     })
 
     app.post("/toys/add-toy", async (req, res) => {
